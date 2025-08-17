@@ -4,9 +4,9 @@ FROM n8nio/n8n:latest
 # Switch to the root user to install new software
 USER root
 
-# Use Alpine's package manager 'apk' to install Python and the venv module.
-# The correct package name for the venv module is 'py3-venv'.
-RUN apk add --no-cache python3 py3-pip py3-venv
+# Use Alpine's package manager 'apk' to install Python.
+# The base python3 package includes the venv module.
+RUN apk add --no-cache python3 py3-pip
 
 # Create a virtual environment in /opt/venv
 RUN python3 -m venv /opt/venv
@@ -18,9 +18,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy the requirements file into the container's main directory
 COPY requirements.txt .
 
-# Install the Python libraries from your requirements file into the virtual environment.
-# The --no-cache-dir flag is used to keep the image size down.
-RUN pip install --no-cache-dir -r requirements.txt
+# Upgrade pip and install the Python libraries from your requirements file into the virtual environment.
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Switch back to the default, non-root user that n8n runs as
 USER node
