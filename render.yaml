@@ -29,7 +29,3 @@ services:
         fromDatabase:
           name: n8n-db
           property: user
-
-databases:
-  - name: n8n-db
-    plan: free
