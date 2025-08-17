@@ -5,8 +5,8 @@ FROM n8nio/n8n:latest
 USER root
 
 # Use Alpine's package manager 'apk' to install Python and the venv module.
-# The '--no-cache' flag helps keep the image size smaller.
-RUN apk add --no-cache python3 py3-pip python3-venv
+# The correct package name for the venv module is 'py3-venv'.
+RUN apk add --no-cache python3 py3-pip py3-venv
 
 # Create a virtual environment in /opt/venv
 RUN python3 -m venv /opt/venv
