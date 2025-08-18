@@ -1,38 +1,28 @@
-@@ -1,31 +1,31 @@
-# Start from the official n8n Docker image
+# Start from the official n8n Docker image (Alpine version)
 FROM n8nio/n8n:latest
 
 # Switch to the root user to install new software
 USER root
 
-# Use Alpine's package manager 'apk' to install Python.
-# The base python3 package includes the venv module.
+# Use Alpine's package manager 'apk' to install Python and pip
 RUN apk add --no-cache python3 py3-pip
 
-# Create a virtual environment in /opt/venv
+# Create and activate a Python virtual environment
 RUN python3 -m venv /opt/venv
-
-# Add the virtual environment's bin directory to the PATH.
-# This ensures that 'python' and 'pip' commands use the venv's versions.
-# This ensures that commands use the venv's Python and pip.
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy the requirements file into the container's main directory
+# Copy the requirements file into the container's working directory
 COPY requirements.txt .
 
-# Upgrade pip and install the Python libraries from your requirements file into the virtual environment.
-# Upgrade pip and install the Python libraries into the virtual environment.
+# Install the Python dependencies from the requirements file
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# --- FIX: Copy the Python script into the container ---
-# This line was missing. It copies your script to the same directory
-# where the n8n Execute Command node is looking for it.
-COPY command_line_scraper.py /opt/render/project/src/command_line_scraper.py
-# --- FIX: Copy the Python script to a directory in the PATH ---
-# This makes the script directly executable as a command.
-COPY command_line_scraper.py /usr/local/bin/scraper
-RUN chmod +x /usr/local/bin/scraper
+# --- FIX ---
+# Copy BOTH scripts to the default working directory
+# On Render, this is /opt/render/project/src/
+COPY command_line_scraper.py .
+COPY fetch_monthly_metrics.py .
 
 # Switch back to the default, non-root user that n8n runs as
 USER node
