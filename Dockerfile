@@ -1,5 +1,5 @@
-# Use a specific, recent, Debian-based version of n8n
-FROM n8nio/n8n:1.45.1-debian
+# Use the CORRECT, current official repository and a specific version
+FROM n8ncloud/n8n:1.45.1
 
 # Switch to the root user to install packages
 USER root
