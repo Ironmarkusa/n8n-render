@@ -22,5 +22,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# --- FIX: Copy the Python script into the container ---
+# This line was missing. It copies your script to the same directory
+# where the n8n Execute Command node is looking for it.
+COPY command_line_scraper.py /opt/render/project/src/command_line_scraper.py
+
 # Switch back to the default, non-root user that n8n runs as
 USER node
