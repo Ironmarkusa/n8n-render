@@ -1,31 +1,32 @@
-# Start from the official n8n Docker image
 FROM n8nio/n8n:latest
 
-# Switch to the root user to install new software
+# --- System Python on Debian-based n8n images ---
 USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3 python3-venv python3-pip ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-# Use Alpine's package manager 'apk' to install Python.
-# The base python3 package includes the venv module.
-RUN apk add --no-cache python3 py3-pip
-
-# Create a virtual environment in /opt/venv
+# --- Virtualenv ---
 RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:${PATH}" \
+    PYTHONUNBUFFERED=1
 
-# Add the virtual environment's bin directory to the PATH.
-# This ensures that 'python' and 'pip' commands use the venv's versions.
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Copy the requirements file into the container's main directory
-COPY requirements.txt .
-
-# Upgrade pip and install the Python libraries from your requirements file into the virtual environment.
+# --- Python deps for BOTH scripts ---
+# requests, urllib3, pydantic, beautifulsoup4, html2text, openai, psycopg2-binary (for DB access if needed)
+# add anything else you use
+COPY requirements.txt /opt/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r /opt/requirements.txt
 
-# --- FIX: Copy the Python script into the container ---
-# This line was missing. It copies your script to the same directory
-# where the n8n Execute Command node is looking for it.
-COPY command_line_scraper.py /opt/render/project/src/command_line_scraper.py
+# --- Put scripts in a predictable place ---
+RUN mkdir -p /data/scripts
+# Your existing scraper
+COPY command_line_scraper.py /data/scripts/command_line_scraper.py
+# Your new GA/GSC fetcher (name it as you like)
+COPY fetch_monthly_metrics.py /data/scripts/fetch_monthly_metrics.py
 
-# Switch back to the default, non-root user that n8n runs as
+# Make them executable and owned by the n8n user
+RUN chown -R node:node /data/scripts && \
+    chmod 755 /data/scripts/command_line_scraper.py /data/scripts/fetch_monthly_metrics.py
+
 USER node
