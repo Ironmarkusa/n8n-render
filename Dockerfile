@@ -1,5 +1,5 @@
 # Start from the correct, modern, Debian-based n8n image
-FROM n8ncloud/n8n:1.45.1
+FROM n8n/n8n:1.45.1
 
 # Switch to the root user to install packages
 USER root
