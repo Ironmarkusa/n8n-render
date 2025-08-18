@@ -1,8 +1,8 @@
-python-dotenv
-requests
-beautifulsoup4
-html2text
-openai
-pydantic
+python-dotenv>=1.0.1
 requests>=2.31.0
+urllib3>=2.2.0
+beautifulsoup4>=4.12.3
+html2text>=2024.2.26
+openai>=1.35.6
+pydantic>=2.7.0
 psycopg2-binary>=2.9.9
