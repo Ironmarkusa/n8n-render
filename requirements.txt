@@ -4,3 +4,5 @@ beautifulsoup4
 html2text
 openai
 pydantic
+requests>=2.31.0
+psycopg2-binary>=2.9.9
