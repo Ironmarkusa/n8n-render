@@ -1,4 +1,4 @@
-FROM n8nio/n8n:1-bullseye
+FROM n8nio/n8n:1-debian
 
 USER root
 
